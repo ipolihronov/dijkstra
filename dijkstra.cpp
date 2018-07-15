@@ -151,7 +151,7 @@ int dij(int begin, int end, std::vector<int>& shortestPath){
   }
   /* the shortest path found */
   int a = index;
-  while( begin != NodeQueue[a].id){
+  while( NodeQueue[getIndexInQueue(a)].prev != NodeQueue[getIndexInQueue(a)].id){
     a = NodeQueue[getIndexInQueue(a)].prev;
     shortestPath.push_back(a);
   }
@@ -159,9 +159,7 @@ int dij(int begin, int end, std::vector<int>& shortestPath){
   return result;
 }
 int main(void){
-// NodeQueue.push_back(n[0]);
-/* init, set all distances to inf */
-
+  /* vector to hold the shortest path (sequence of nodes) */
   std::vector<int> v;
   int dist = 0;
   dist = dij(1, 6, v);
