@@ -71,7 +71,6 @@ void init(int first){
     it->checked[NODES] = false;
     i++;
   }
-  std::cout << first << '\n';
   NodeQueue[first].dist = 0;
   NodeQueue[first].prev = first;
 
@@ -120,7 +119,6 @@ int dij(int begin, int end, std::vector<int>& shortestPath){
     if( end == NodeQueue[index].id ){
       /* the end node is reached */
       done = true;
-      std::cout << "enddd" << '\n';
     }
   }
   /* the shortest path found */
@@ -142,7 +140,7 @@ int main(void){
   int dist = 0;
   dist = dij(0, 6, v);
 
-  std::cout << "the shortest dist: "<< dist << '\n';
+  std::cout << "the shortest distance: "<< dist << '\n';
   std::cout << "path:" << '\n';
   for(std::vector<int>::iterator i = v.begin(); i != v.end(); i++){
     std::cout << *i << "\t";
