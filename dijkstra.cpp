@@ -5,6 +5,7 @@
 using namespace std;
 #define DEBUG_INFO
 #define NODES 7
+#define MAX_DIST 0xffff
 
 class Node{
 public:
@@ -21,8 +22,8 @@ int graph [NODES][NODES] = {
   * 0 - no connection
   * >0 - distance between the nodes
   */
-  {0, 2, 5, 0, 0, 0, 88},
-  {2, 0, 0, 0, 0, 0, 0},
+  {0, 0, 5, 0, 0, 0, 88},
+  {0, 0, 0, 0, 0, 0, 0},
   {5, 0, 0, 4, 0, 0, 0},
   {0, 0, 4, 0, 1, 0, 0},
   {0, 0, 0, 1, 0, 1, 0},
@@ -39,7 +40,7 @@ bool NodeSort(const Node &a, const Node &b){
 }
 
 #ifdef DEBUG_INFO
-void printNodes(void){
+void printSteps(void){
   std::cout << '\n';
   for (it = NodeQueue.begin(); it != NodeQueue.end(); it++){
     std::cout << "ID: "<<it->id << " ";
@@ -79,8 +80,8 @@ void init(int first){
     NodeQueue.push_back(n[a]);
   }
   for (it = NodeQueue.begin(); it != NodeQueue.end(); it++){
-    it->dist = 0xffff;
-    it->prev = 0xffff;
+    it->dist = MAX_DIST;
+    it->prev = MAX_DIST;
     it->id = i;
     it->done = false;
     it->checked[NODES] = false;
@@ -98,10 +99,17 @@ void init(int first){
 * - int end - the id of the end node
 * - vector<int>shortestPath - contains the shortest path
 * return
-* - int result - the shoretest distance in given units
+* - >0 - the shoretest distance in given units
+* - 0 - error. No path
 */
 
 int dij(int begin, int end, std::vector<int>& shortestPath){
+  if (end < begin){
+    throw runtime_error ("the end index should be greater than the begin index");
+  }
+  if (NODES <= end){
+    throw runtime_error ("the end index is out of bounds [0..NODES - 1]");
+  }
   init(begin);
   std::sort (NodeQueue.begin(), NodeQueue.end(), NodeSort);
   bool done = false;
@@ -146,23 +154,27 @@ int dij(int begin, int end, std::vector<int>& shortestPath){
       std::cout << "enddd" << '\n';
     }
 #ifdef DEBUG_INFO
-    printNodes();
+    printSteps();
 #endif
   }
   /* the shortest path found */
   int a = index;
   while( NodeQueue[getIndexInQueue(a)].prev != NodeQueue[getIndexInQueue(a)].id){
-    a = NodeQueue[getIndexInQueue(a)].prev;
     shortestPath.push_back(a);
+    a = NodeQueue[getIndexInQueue(a)].prev;
   }
+  shortestPath.push_back(a);
   int result = NodeQueue[getIndexInQueue(end)].dist;
+  if ( MAX_DIST == result ){
+    result = 0;
+  }
   return result;
 }
 int main(void){
   /* vector to hold the shortest path (sequence of nodes) */
   std::vector<int> v;
   int dist = 0;
-  dist = dij(1, 6, v);
+  dist = dij(0, 6, v);
 
   std::cout << "the shortest dist: "<< dist << '\n';
   std::cout << "path:" << '\n';
