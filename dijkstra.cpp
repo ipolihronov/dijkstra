@@ -3,7 +3,7 @@
 #include <algorithm>
 
 using namespace std;
-#define DEBUG_INFO
+
 #define NODES 7
 #define MAX_DIST 0xffff
 
@@ -38,22 +38,6 @@ std::vector<Node>::iterator it;
 bool NodeSort(const Node &a, const Node &b){
   return (a.dist < b.dist);
 }
-
-#ifdef DEBUG_INFO
-void printSteps(void){
-  std::cout << '\n';
-  for (it = NodeQueue.begin(); it != NodeQueue.end(); it++){
-    std::cout << "ID: "<<it->id << " ";
-    std::cout << "DIST: "<<it->dist << " ";
-    std::cout << "PREV: "<<it->prev << " ";
-    std::cout << "DONE: "<<it->done << " ||";
-    for (int a = 0; a < NODES; a++){
-      std::cout << it->checked[a] << " ";
-    }
-    std::cout << '\n';
-  }
-}
-#endif
 
 int isChecked(int id, int index){
   for (it = NodeQueue.begin(); it != NodeQueue.end(); it++){
@@ -116,33 +100,18 @@ int dij(int begin, int end, std::vector<int>& shortestPath){
   int index = 0;
   int idx;
   while(true != done){
-#ifdef DEBUG_INFO
-    std::cout << "------------------" << '\n';
-    std::cout << "------------------" << '\n';
-    std::cout << "index is: " << index << '\n';
-    std::cout << "the current node is: " << NodeQueue[index].id << '\n';
-#endif
     for (int a = 0; a < NODES; a++){
       if(( 0 < graph[NodeQueue[index].id][a])){
-#ifdef DEBUG_INFO
-        std::cout << "found a connection: node " << a << ". Dist " << graph[NodeQueue[index].id][a]<<'\n';
-#endif
           if (true != isChecked(a, index)){
             idx = getIndexInQueue(a);
-#ifdef DEBUG_INFO
-            std::cout << "id of node in the queue: " << idx << '\n';
-#endif
             int distTemp = graph[NodeQueue[index].id][a] + NodeQueue[index].dist;
             if (distTemp < NodeQueue[idx].dist){
               NodeQueue[idx].dist = distTemp;
-              NodeQueue[idx].prev = NodeQueue[index].id; //правилно
+              NodeQueue[idx].prev = NodeQueue[index].id;
             }
-            NodeQueue[index].checked[a] = true; //правилно
+            NodeQueue[index].checked[a] = true;
           }
           else{
-#ifdef DEBUG_INFO
-            std::cout << "connection already checked" << '\n';
-#endif
           }
       }
     }
@@ -153,9 +122,6 @@ int dij(int begin, int end, std::vector<int>& shortestPath){
       done = true;
       std::cout << "enddd" << '\n';
     }
-#ifdef DEBUG_INFO
-    printSteps();
-#endif
   }
   /* the shortest path found */
   int a = index;
